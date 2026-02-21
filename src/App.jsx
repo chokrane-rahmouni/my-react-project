@@ -1,35 +1,77 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+// Step 3: Variable outside the component
+const courseTitle = "React Development";
 
+// Main App component
 function App() {
-  const [count, setCount] = useState(0)
-
+  // Step 2: Variable inside the component
+  const studentName = "Chokrane Rahmouni";
+  
+  // Step 6: JavaScript object
+  const student = {
+    name: "Chokrane Rahmouni",
+    age: 20,
+    track: "Computer Science"
+  };
+  
+  // Step 7: Functions
+  function sayHello() {
+    return `Hello, I'm ${studentName} and I'm learning ${courseTitle}!`;
+  }
+  
+  function greetStudent() {
+    return `Welcome back, ${student.name} from ${student.track}!`;
+  }
+  
+  // The return statement (JSX)
   return (
-    <>
+    <div>
+      {/* Step 1: Simple title */}
+      <h1>My First React Component</h1>
+      
+      {/* Step 2: Display variable inside component */}
+      <p>Student: {studentName}</p>
+      
+      {/* Step 3: Display variable outside component */}
+      <p>Course: {courseTitle}</p>
+      
+      {/* Step 4: Dynamic content with both variables */}
+      <p>Welcome to {courseTitle}, {studentName}!</p>
+      
+      {/* Step 5: Form elements */}
       <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+        <label htmlFor="studentInput">Student Name:</label>
+        <input type="text" id="studentInput" placeholder="Enter your name" />
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
+      
+      {/* Step 6: Display object properties */}
+      <div>
+        <h3>Student Information:</h3>
+        <p>Name: {student.name}</p>
+        <p>Age: {student.age}</p>
+        <p>Track: {student.track}</p>
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+      
+      {/* Step 7: Function calls */}
+      <div>
+        <h3>Messages:</h3>
+        <p>{sayHello()}</p>
+        <p>{greetStudent()}</p>
+      </div>
+    </div>
+  );
 }
 
-export default App
+// Export the component
+export default App;
+
+/*
+Step 8: Reflection Questions
+1. One thing I understand well in this lab:
+   - How to use {} to display JavaScript variables and expressions in JSX
+
+2. One thing that is still confusing:
+   - Why React re-renders automatically when variables change
+
+3. One mistake I made and fixed:
+   - Forgot to wrap multiple elements in a single parent div
+*/
