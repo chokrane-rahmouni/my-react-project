@@ -1,25 +1,13 @@
 import './App.css';
-// Step 1: Data structure explanation (as comment)
-/*
-Hacker News displays technology news and articles.
-Each post shows: title, link, author, points, comments.
 
-The objectID property should be used as the React key because:
-- It's unique for each item
-- It's stable (doesn't change)
-- React uses it to track which items changed
-
-This structure is realistic because it matches the actual Hacker News API format.
-*/
-
-// Step 2: Fake data outside the component
+// Step 1: Global stories array (stays the same)
 const stories = [
   {
     objectID: "12345",
     title: "React 19 Released: New Features and Improvements",
     url: "https://reactjs.org/blog/2024/react-19",
     author: "react-team",
-    points: 342,
+    points: 343,
     num_comments: 89
   },
   {
@@ -48,48 +36,64 @@ const stories = [
   }
 ];
 
-// Main App component
+// Step 5: Header Component (Mini Challenge)
+function Header() {
+  return (
+    <header style={{ textAlign: 'center', marginBottom: '30px' }}>
+      <h1>📰 Hacker News Reader</h1>
+      <p>Top stories from the developer community</p>
+    </header>
+  );
+}
+
+// Step 3: Search Component (UI only, no functionality yet)
+function Search() {
+  return (
+    <div style={{ marginBottom: '30px', textAlign: 'center' }}>
+      <label htmlFor="search">Search stories: </label>
+      <input 
+        type="text" 
+        id="search" 
+        placeholder="Search will work later..."
+        style={{ padding: '8px', width: '300px', marginLeft: '10px' }}
+      />
+    </div>
+  );
+}
+
+// Step 1: List Component (renders stories using global variable)
+function List() {
+  return (
+    <div className="stories-list">
+      {stories.map(story => (
+        <article key={story.objectID} className="story-item">
+          <h3>
+            <a 
+              href={story.url} 
+              target="_blank" 
+              rel="noopener noreferrer"
+            >
+              {story.title}
+            </a>
+          </h3>
+          <div className="story-details">
+            <span className="story-points">🔹 {story.points} points</span>
+            <span className="story-author">by {story.author}</span>
+            <span className="story-comments">💬 {story.num_comments} comments</span>
+          </div>
+        </article>
+      ))}
+    </div>
+  );
+}
+
+// Step 4: Main App Component (now clean and simple!)
 function App() {
-  // Step 3: Render the list using map()
-  console.log("Stories data:", stories); // Debug: log to console
-  
   return (
     <div>
-      <h1>Hacker News Stories</h1>
-      
-      {/* Step 3 & 4 & 5: map() with proper keys */}
-      <div className="stories-list">
-        {stories.map(story => (
-          // Step 5: KEY IS HERE - using objectID
-          <article key={story.objectID} className="story-item">
-            {/* Step 4: Title as clickable link */}
-            <h3>
-              <a 
-                href={story.url} 
-                target="_blank" 
-                rel="noopener noreferrer"
-              >
-                {story.title}
-              </a>
-            </h3>
-            
-            {/* Step 4: Display all story details */}
-            <div className="story-details">
-              <span className="story-points">🔹 {story.points} points</span>
-              <span className="story-author">by {story.author}</span>
-              <span className="story-comments">💬 {story.num_comments} comments</span>
-            </div>
-          </article>
-        ))}
-      </div>
-
-    {/* Step 6: Mini Challenge - Show what you did */}
-      <div style={{ marginTop: "30px", borderTop: "1px solid #ccc", paddingTop: "20px" }}>
-        <h2>Step 6: Mini Challenge Complete</h2>
-        <p>✅ Added a new story object (4th one)</p>
-        <p>✅ Increased points of first story from 342 to 343</p>
-        <p>✅ UI updates automatically in browser</p>
-      </div>
+      <Header />
+      <Search />
+      <List />
     </div>
   );
 }
@@ -97,30 +101,27 @@ function App() {
 export default App;
 
 /*
-Step 7: Reflection Questions
+Step 4: Reflection Questions
 
-1. Why is map() essential for rendering lists in React?
-   - map() transforms an array of data into an array of JSX elements
-   - It's declarative: we describe what each item should look like
-   - React efficiently updates only items that changed
+What does App do now?
+- App is now the "master component" that organizes the page structure
+- It renders Header, Search, and List in the correct order
+- It no longer contains rendering logic, just composition
 
-2. Why is objectID the correct key?
-   - It's unique (no duplicates)
-   - It's stable (doesn't change when list order changes)
-   - React uses keys to identify which items to re-render
-   - Using index as key can cause bugs with dynamic lists
+What does List do?
+- List is responsible for rendering all the stories
+- It uses the global stories array and maps through it
+- It handles the display of each story's details
 
-3. What will change when we replace fake data with the Hacker News API?
-   - Data will come from an API call (fetch/axios)
-   - Need to handle loading and error states
-   - Data might change frequently (new stories)
-   - We'll need to manage state (useState, useEffect)
-   - The rendering logic (map) stays exactly the same!
-*/
+What does Search do?
+- Search renders the search input UI
+- Currently just a label and input (functionality comes later)
+- Its responsibility is the search interface only
 
-// Step 8: Git commands (run in terminal)
-/*
-git add .
-git commit -m "Week 3: Rendering Hacker News style lists"
-git push
+Why is this structure cleaner than before?
+1. Each component has ONE job (Single Responsibility Principle)
+2. App.jsx is shorter and easier to read (from ~100 lines to ~30 lines)
+3. Easy to find code (want to change search? Go to Search component)
+4. Reusable components (can use <Header /> anywhere)
+5. Easier to debug (issues isolated to specific components)
 */
