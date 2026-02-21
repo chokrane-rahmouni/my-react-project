@@ -1,77 +1,126 @@
-// Step 3: Variable outside the component
-const courseTitle = "React Development";
+import './App.css';
+// Step 1: Data structure explanation (as comment)
+/*
+Hacker News displays technology news and articles.
+Each post shows: title, link, author, points, comments.
+
+The objectID property should be used as the React key because:
+- It's unique for each item
+- It's stable (doesn't change)
+- React uses it to track which items changed
+
+This structure is realistic because it matches the actual Hacker News API format.
+*/
+
+// Step 2: Fake data outside the component
+const stories = [
+  {
+    objectID: "12345",
+    title: "React 19 Released: New Features and Improvements",
+    url: "https://reactjs.org/blog/2024/react-19",
+    author: "react-team",
+    points: 342,
+    num_comments: 89
+  },
+  {
+    objectID: "12346",
+    title: "TypeScript 5.5: What's New",
+    url: "https://typescriptlang.org/docs/",
+    author: "typescript-team",
+    points: 215,
+    num_comments: 47
+  },
+  {
+    objectID: "12347",
+    title: "Understanding React Hooks: A Complete Guide",
+    url: "https://dev.to/react-hooks-guide",
+    author: "devcommunity",
+    points: 156,
+    num_comments: 23
+  },
+  {
+    objectID: "12348",
+    title: "Vite vs Create React App: Which One to Choose?",
+    url: "https://vitejs.dev/comparison",
+    author: "vite-team",
+    points: 98,
+    num_comments: 15
+  }
+];
 
 // Main App component
 function App() {
-  // Step 2: Variable inside the component
-  const studentName = "Chokrane Rahmouni";
+  // Step 3: Render the list using map()
+  console.log("Stories data:", stories); // Debug: log to console
   
-  // Step 6: JavaScript object
-  const student = {
-    name: "Chokrane Rahmouni",
-    age: 20,
-    track: "Computer Science"
-  };
-  
-  // Step 7: Functions
-  function sayHello() {
-    return `Hello, I'm ${studentName} and I'm learning ${courseTitle}!`;
-  }
-  
-  function greetStudent() {
-    return `Welcome back, ${student.name} from ${student.track}!`;
-  }
-  
-  // The return statement (JSX)
   return (
     <div>
-      {/* Step 1: Simple title */}
-      <h1>My First React Component</h1>
+      <h1>Hacker News Stories</h1>
       
-      {/* Step 2: Display variable inside component */}
-      <p>Student: {studentName}</p>
-      
-      {/* Step 3: Display variable outside component */}
-      <p>Course: {courseTitle}</p>
-      
-      {/* Step 4: Dynamic content with both variables */}
-      <p>Welcome to {courseTitle}, {studentName}!</p>
-      
-      {/* Step 5: Form elements */}
-      <div>
-        <label htmlFor="studentInput">Student Name:</label>
-        <input type="text" id="studentInput" placeholder="Enter your name" />
+      {/* Step 3 & 4 & 5: map() with proper keys */}
+      <div className="stories-list">
+        {stories.map(story => (
+          // Step 5: KEY IS HERE - using objectID
+          <article key={story.objectID} className="story-item">
+            {/* Step 4: Title as clickable link */}
+            <h3>
+              <a 
+                href={story.url} 
+                target="_blank" 
+                rel="noopener noreferrer"
+              >
+                {story.title}
+              </a>
+            </h3>
+            
+            {/* Step 4: Display all story details */}
+            <div className="story-details">
+              <span className="story-points">🔹 {story.points} points</span>
+              <span className="story-author">by {story.author}</span>
+              <span className="story-comments">💬 {story.num_comments} comments</span>
+            </div>
+          </article>
+        ))}
       </div>
-      
-      {/* Step 6: Display object properties */}
-      <div>
-        <h3>Student Information:</h3>
-        <p>Name: {student.name}</p>
-        <p>Age: {student.age}</p>
-        <p>Track: {student.track}</p>
-      </div>
-      
-      {/* Step 7: Function calls */}
-      <div>
-        <h3>Messages:</h3>
-        <p>{sayHello()}</p>
-        <p>{greetStudent()}</p>
+
+    {/* Step 6: Mini Challenge - Show what you did */}
+      <div style={{ marginTop: "30px", borderTop: "1px solid #ccc", paddingTop: "20px" }}>
+        <h2>Step 6: Mini Challenge Complete</h2>
+        <p>✅ Added a new story object (4th one)</p>
+        <p>✅ Increased points of first story from 342 to 343</p>
+        <p>✅ UI updates automatically in browser</p>
       </div>
     </div>
   );
 }
 
-// Export the component
 export default App;
 
 /*
-Step 8: Reflection Questions
-1. One thing I understand well in this lab:
-   - How to use {} to display JavaScript variables and expressions in JSX
+Step 7: Reflection Questions
 
-2. One thing that is still confusing:
-   - Why React re-renders automatically when variables change
+1. Why is map() essential for rendering lists in React?
+   - map() transforms an array of data into an array of JSX elements
+   - It's declarative: we describe what each item should look like
+   - React efficiently updates only items that changed
 
-3. One mistake I made and fixed:
-   - Forgot to wrap multiple elements in a single parent div
+2. Why is objectID the correct key?
+   - It's unique (no duplicates)
+   - It's stable (doesn't change when list order changes)
+   - React uses keys to identify which items to re-render
+   - Using index as key can cause bugs with dynamic lists
+
+3. What will change when we replace fake data with the Hacker News API?
+   - Data will come from an API call (fetch/axios)
+   - Need to handle loading and error states
+   - Data might change frequently (new stories)
+   - We'll need to manage state (useState, useEffect)
+   - The rendering logic (map) stays exactly the same!
+*/
+
+// Step 8: Git commands (run in terminal)
+/*
+git add .
+git commit -m "Week 3: Rendering Hacker News style lists"
+git push
 */
