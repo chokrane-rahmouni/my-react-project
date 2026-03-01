@@ -1,6 +1,6 @@
 import './App.css';
 
-// Step 1: Global stories array (stays the same)
+// Global stories array
 const stories = [
   {
     objectID: "12345",
@@ -36,33 +36,40 @@ const stories = [
   }
 ];
 
-// Step 5: Header Component (Mini Challenge)
-function Header() {
+// Step 1: Header as arrow function
+const Header = () => {
   return (
     <header style={{ textAlign: 'center', marginBottom: '30px' }}>
       <h1>📰 Hacker News Reader</h1>
       <p>Top stories from the developer community</p>
     </header>
   );
-}
+};
 
-// Step 3: Search Component (UI only, no functionality yet)
-function Search() {
+// Step 5 & 7: Search with event handler
+const Search = () => {
+  const handleSearch = (event) => {
+    const inputValue = event.target.value;
+    console.log("🔍 Searching for:", inputValue);
+    console.log("📝 Characters typed:", inputValue.length);
+  };
+
   return (
     <div style={{ marginBottom: '30px', textAlign: 'center' }}>
       <label htmlFor="search">Search stories: </label>
       <input 
         type="text" 
         id="search" 
-        placeholder="Search will work later..."
+        placeholder="Type to search..."
         style={{ padding: '8px', width: '300px', marginLeft: '10px' }}
+        onChange={handleSearch}
       />
     </div>
   );
-}
+};
 
-// Step 1: List Component (renders stories using global variable)
-function List() {
+// Step 1: List as arrow function
+const List = () => {
   return (
     <div className="stories-list">
       {stories.map(story => (
@@ -85,10 +92,10 @@ function List() {
       ))}
     </div>
   );
-}
+};
 
-// Step 4: Main App Component (now clean and simple!)
-function App() {
+// Step 1: App as arrow function
+const App = () => {
   return (
     <div>
       <Header />
@@ -96,12 +103,12 @@ function App() {
       <List />
     </div>
   );
-}
+};
 
 export default App;
 
 /*
-Step 4: Reflection Questions
+Step 4 Reflection Questions (from Week 4)
 
 What does App do now?
 - App is now the "master component" that organizes the page structure
@@ -124,4 +131,25 @@ Why is this structure cleaner than before?
 3. Easy to find code (want to change search? Go to Search component)
 4. Reusable components (can use <Header /> anywhere)
 5. Easier to debug (issues isolated to specific components)
+*/
+
+/*
+📌 WEEK 5 REFLECTION QUESTIONS
+
+1. When do we use concise body arrow functions?
+   - When the function immediately returns a value
+   - When there's no logic before the return
+   - Syntax: (param) => value or (param) => (<JSX>)
+
+2. When do we use block body arrow functions?
+   - When we need multiple lines of code
+   - When we have logic before the return
+   - When we need to declare variables
+   - Syntax: (param) => { // code; return value; }
+
+3. What does an event object contain?
+   - Information about the event (type, target)
+   - target.value - the current input value
+   - target.id - the element's id
+   - Methods like preventDefault()
 */
