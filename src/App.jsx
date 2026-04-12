@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './App.css';
 
 const Header = () => {
@@ -10,11 +10,11 @@ const Header = () => {
   );
 };
 
-const Search = ({ onSearch }) => {
+// Step 1 & 2: Search with destructuring and controlled component
+const Search = ({ searchTerm, onSearch }) => {
   const handleSearch = (event) => {
     const inputValue = event.target.value;
-    console.log("🔍 Searching for:", inputValue);
-    onSearch(event);
+    onSearch(inputValue);
   };
 
   return (
@@ -24,13 +24,15 @@ const Search = ({ onSearch }) => {
         type="text" 
         id="search" 
         placeholder="Type to search..."
-        style={{ padding: '8px', width: '300px', marginLeft: '10px' }}
+        value={searchTerm}
         onChange={handleSearch}
+        style={{ padding: '8px', width: '300px', marginLeft: '10px' }}
       />
     </div>
   );
 };
 
+// Step 2: Item with destructuring
 const Item = ({ story }) => {
   return (
     <article className="story-item">
@@ -48,6 +50,7 @@ const Item = ({ story }) => {
   );
 };
 
+// Step 2: List with destructuring
 const List = ({ stories }) => {
   return (
     <div className="stories-list">
@@ -94,11 +97,21 @@ const App = () => {
     }
   ];
 
-  const [searchTerm, setSearchTerm] = useState('');
+  // Step 4: Initialize state from localStorage (or empty string if nothing stored)
+  const [searchTerm, setSearchTerm] = useState(() => {
+    const saved = localStorage.getItem("search");
+    return saved !== null ? saved : "";
+  });
 
-  const handleSearch = (event) => {
-    const value = event.target.value;
+  // Step 5 & 6: useEffect to save to localStorage whenever searchTerm changes
+  useEffect(() => {
+    localStorage.setItem("search", searchTerm);
+    console.log("Saved to localStorage:", searchTerm);
+  }, [searchTerm]);
+
+  const handleSearch = (value) => {
     setSearchTerm(value);
+    console.log("Search term updated:", value);
   };
 
   const filteredStories = stories.filter((story) => {
@@ -110,7 +123,7 @@ const App = () => {
   return (
     <div>
       <Header />
-      <Search onSearch={handleSearch} />
+      <Search searchTerm={searchTerm} onSearch={handleSearch} />
       <List stories={filteredStories} />
     </div>
   );
@@ -119,17 +132,21 @@ const App = () => {
 export default App;
 
 /*
-WEEK 6 REFLECTION QUESTIONS
+📌 WEEK 7 REFLECTION QUESTIONS
 
-1. What is the difference between props and state?
-   - Props are passed FROM parent TO child (read-only)
-   - State is managed INSIDE a component (can change)
+1. What is a controlled component?
+   - An input whose value is controlled by React state
+   - The value comes from state, not from the DOM
+   - Updates happen via onChange handlers that update state
 
-2. Why do we lift state up?
-   - To share data between multiple components
-   - To keep a single source of truth
+2. What is a side effect in React?
+   - Anything that interacts with the outside world
+   - Examples: localStorage, API calls, timers, console.log
+   - Side effects belong in useEffect, not during rendering
 
-3. Where should filtering logic live?
-   - In the component that OWNS the data (App)
-   - Before passing data down to children
+3. Why do we use useEffect instead of calling code directly?
+   - To avoid running side effects during every render
+   - To prevent infinite loops
+   - To control WHEN the effect runs (dependency array)
+   - To keep rendering pure and predictable
 */
