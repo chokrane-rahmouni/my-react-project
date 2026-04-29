@@ -1,6 +1,36 @@
 import { useState, useEffect } from 'react';
 import './App.css';
 
+// ============================================
+// PART 1: Reusable InputWithLabel Component
+// ============================================
+
+// Step 1, 2, 3: Generic reusable component with children
+const InputWithLabel = ({ 
+  id, 
+  type = "text",  // Step 2: Default type attribute
+  value, 
+  onInputChange, 
+  children 
+}) => {
+  return (
+    <div style={{ marginBottom: '30px', textAlign: 'center' }}>
+      <label htmlFor={id}>{children}</label>
+      <input
+        id={id}
+        type={type}
+        value={value}
+        onChange={onInputChange}
+        placeholder="Type to search..."
+        style={{ padding: '8px', width: '300px', marginLeft: '10px' }}
+      />
+    </div>
+  );
+};
+
+// ============================================
+// Header Component
+// ============================================
 const Header = () => {
   return (
     <header style={{ textAlign: 'center', marginBottom: '30px' }}>
@@ -10,30 +40,10 @@ const Header = () => {
   );
 };
 
-// Step 1 & 2: Search with destructuring and controlled component
-const Search = ({ searchTerm, onSearch }) => {
-  const handleSearch = (event) => {
-    const inputValue = event.target.value;
-    onSearch(inputValue);
-  };
-
-  return (
-    <div style={{ marginBottom: '30px', textAlign: 'center' }}>
-      <label htmlFor="search">Search stories: </label>
-      <input 
-        type="text" 
-        id="search" 
-        placeholder="Type to search..."
-        value={searchTerm}
-        onChange={handleSearch}
-        style={{ padding: '8px', width: '300px', marginLeft: '10px' }}
-      />
-    </div>
-  );
-};
-
-// Step 2: Item with destructuring
-const Item = ({ story }) => {
+// ============================================
+// Item Component (with delete button)
+// ============================================
+const Item = ({ story, onRemoveItem }) => {
   return (
     <article className="story-item">
       <h3>
@@ -45,24 +55,49 @@ const Item = ({ story }) => {
         <span className="story-points">🔹 {story.points} points</span>
         <span className="story-author">by {story.author}</span>
         <span className="story-comments">💬 {story.num_comments} comments</span>
+        {/* Step 11: Delete button */}
+        <button 
+          onClick={() => onRemoveItem(story)}
+          style={{ 
+            marginLeft: '15px', 
+            padding: '4px 8px', 
+            backgroundColor: '#ff4444', 
+            color: 'white', 
+            border: 'none', 
+            borderRadius: '3px',
+            cursor: 'pointer'
+          }}
+        >
+          ❌ Dismiss
+        </button>
       </div>
     </article>
   );
 };
 
-// Step 2: List with destructuring
-const List = ({ stories }) => {
+// ============================================
+// List Component
+// ============================================
+const List = ({ stories, onRemoveItem }) => {
   return (
     <div className="stories-list">
       {stories.map(story => (
-        <Item key={story.objectID} story={story} />
+        <Item 
+          key={story.objectID} 
+          story={story} 
+          onRemoveItem={onRemoveItem}  // Step 10: Pass handler to Item
+        />
       ))}
     </div>
   );
 };
 
+// ============================================
+// Main App Component
+// ============================================
 const App = () => {
-  const stories = [
+  // Step 6: Rename initial data
+  const initialStories = [
     {
       objectID: "12345",
       title: "React 19 Released: New Features and Improvements",
@@ -97,23 +132,35 @@ const App = () => {
     }
   ];
 
-  // Step 4: Initialize state from localStorage (or empty string if nothing stored)
+  // Step 7: Create stories state
+  const [stories, setStories] = useState(initialStories);
+
+  // Search state with localStorage persistence
   const [searchTerm, setSearchTerm] = useState(() => {
     const saved = localStorage.getItem("search");
     return saved !== null ? saved : "";
   });
 
-  // Step 5 & 6: useEffect to save to localStorage whenever searchTerm changes
+  // Save searchTerm to localStorage
   useEffect(() => {
     localStorage.setItem("search", searchTerm);
-    console.log("Saved to localStorage:", searchTerm);
   }, [searchTerm]);
 
-  const handleSearch = (value) => {
-    setSearchTerm(value);
-    console.log("Search term updated:", value);
+  // Step 8: Remove handler - filters out the removed item
+  const handleRemoveStory = (storyToRemove) => {
+    const updatedStories = stories.filter(
+      (story) => story.objectID !== storyToRemove.objectID
+    );
+    setStories(updatedStories);
+    console.log("Removed story:", storyToRemove.title);
   };
 
+  // Search handler
+  const handleSearch = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  // Filter stories based on searchTerm
   const filteredStories = stories.filter((story) => {
     const title = story.title.toLowerCase();
     const search = searchTerm.toLowerCase();
@@ -123,30 +170,48 @@ const App = () => {
   return (
     <div>
       <Header />
-      <Search searchTerm={searchTerm} onSearch={handleSearch} />
-      <List stories={filteredStories} />
+      
+      {/* Step 4: Use composition with children */}
+      <InputWithLabel
+        id="search"
+        type="text"
+        value={searchTerm}
+        onInputChange={handleSearch}
+      >
+        <strong>🔍 Search stories:</strong>
+      </InputWithLabel>
+      
+      <p>Showing {filteredStories.length} of {stories.length} stories</p>
+      
+      {/* Step 9: Pass remove handler to List */}
+      <List stories={filteredStories} onRemoveItem={handleRemoveStory} />
     </div>
   );
 };
 
 export default App;
 
+// ============================================
+// WEEK 8 REFLECTION QUESTIONS
+// ============================================
+
 /*
-📌 WEEK 7 REFLECTION QUESTIONS
+📌 WEEK 8 REFLECTION QUESTIONS
 
-1. What is a controlled component?
-   - An input whose value is controlled by React state
-   - The value comes from state, not from the DOM
-   - Updates happen via onChange handlers that update state
+1. What makes a component reusable?
+   - Generic props (not domain-specific names like "searchTerm")
+   - Uses children for flexible content
+   - No hard-coded values
+   - Can be used in different contexts
 
-2. What is a side effect in React?
-   - Anything that interacts with the outside world
-   - Examples: localStorage, API calls, timers, console.log
-   - Side effects belong in useEffect, not during rendering
+2. What is component composition?
+   - Using children prop to pass JSX content into a component
+   - Allows flexible rendering without changing the component
+   - Example: <InputWithLabel> <strong>Search:</strong> </InputWithLabel>
 
-3. Why do we use useEffect instead of calling code directly?
-   - To avoid running side effects during every render
-   - To prevent infinite loops
-   - To control WHEN the effect runs (dependency array)
-   - To keep rendering pure and predictable
+3. Why do we pass handlers down the component tree?
+   - State lives in parent component (single source of truth)
+   - Child components need to trigger parent state changes
+   - Following "unidirectional data flow" pattern
+   - Keeps state management centralized and predictable
 */
